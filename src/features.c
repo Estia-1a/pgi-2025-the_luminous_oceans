@@ -14,3 +14,64 @@
 void helloWorld() {
     printf("Hello World !");
 }
+void dimension (char *source_path) {
+    int width ;
+    int height ;
+    int channel_count ;
+    unsigned char *data ;
+    
+    int resultat = read_image_data (source_path, &data, &width, &height, &channel_count);
+    if(resultat) {
+    printf("dimension: %d, %d ", width, height);
+    }
+    else {
+     printf("erreur: ");
+    }
+}
+
+void first_pixel (char *source_path) {
+    int width ;
+    int height ;
+    int channel_count ;
+    unsigned char *data ;
+    
+    int resultat = read_image_data (source_path, &data, &width, &height, &channel_count);
+    if(resultat) {
+    printf("dimension: %d, %d, %d ",data[0], data[1], data[2]);
+    }
+    else {
+     printf("erreur: ");
+    }
+}
+
+void tenth_pixel (char *source_path) {
+    int width ;
+    int height ;
+    int channel_count ;
+    unsigned char *data ;
+    int pixel = 10 ;
+    
+    int resultat = read_image_data (source_path, &data, &width, &height, &channel_count);
+    if(resultat) {
+    printf("La couleur du dernier pixel est : %d, %d, %d ",data[3*pixel-3], data[3*pixel-2], data[3*pixel-1]);
+    }
+    else {
+     printf("erreur: ");
+    }
+}
+
+void second_line (char *source_path) {
+    int width = 2 ;
+    int height ;
+    int channel_count ;
+    unsigned char *data ;
+    int pixel = 1 ;
+    
+    int resultat = read_image_data (source_path, &data, &width, &height, &channel_count);
+    if(resultat) {
+    printf("La couleur du dernier pixel est : %d, %d, %d ",data[width *(3*pixel-3)], data[width *(3*pixel-2)], data[width *(3*pixel-1)]);
+    }
+    else {
+     printf("erreur: ");
+    }
+}
