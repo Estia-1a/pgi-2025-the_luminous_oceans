@@ -48,6 +48,9 @@ int main(int argc, char **argv) {
     
     second_line(configuration.filenames[0]);
   }
+  if() {
+    
+  }
   /*
    * TO COMPLETE
    */
