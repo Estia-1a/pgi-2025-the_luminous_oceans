@@ -69,7 +69,7 @@ void second_line (char *source_path) {
     
     int resultat = read_image_data (source_path, &data, &width, &height, &channel_count);
     if(resultat) {
-    printf("La couleur du dernier pixel est : %d, %d, %d ",data[width *(3*pixel-3)], data[width *(3*pixel-2)], data[width *(3*pixel-1)]);
+    printf("La couleur du dernier pixel est : %d, %d, %d ",data[width*(3*pixel-3)], data[width*(3*pixel-2)], data[width*(3*pixel-1)]);
     }
     else {
      printf("erreur: ");
