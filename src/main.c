@@ -48,11 +48,15 @@ int main(int argc, char **argv) {
     
     second_line(configuration.filenames[0]);
   }
-    if ( strncmp( configuration.command, "print_pixel", 11 ) == 0 ) {
+  
+  if ( strncmp( configuration.command, "print_pixel", 11 ) == 0 ) {
     
     print_pixel(configuration.filenames[0]);
   }
-  /*
+
+  if (strncmp(configuration.command, "max_component", 13) == 0) {
+    max_component(configuration.filenames[0], configuration.arguments[0][0]);
+  }
    * TO COMPLETE
    */
   
