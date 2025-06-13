@@ -76,6 +76,11 @@ int main(int argc, char **argv) {
     /* helloworld() function is defined in feature.h and implemented in feature.c */
     second_line(configuration.filenames[0]);
   }
+  if ( strncmp( configuration.command, "max_component", 13 ) == 0 ) {
+    /* helloworld() function is defined in feature.h and implemented in feature.c */
+    max_component(configuration.filenames[0]);
+  }
+  
    /* TO COMPLETE*/
   
   return 0;
