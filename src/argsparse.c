@@ -27,57 +27,62 @@ void parse_arguments( int argc, char **argv, Config* conf ) {
       {0, 0, 0, 0}
     };
 
-
   while (1) {
       int option_index = 0;
 
       c = getopt_long (argc, argv, "f:c:v:", long_options, &option_index);
-      conf->debug_mode=debug;
-      /* Detect the end of the options. */
+      conf->debug_mode = debug;
+
       if (c == -1) {
         break;
       }
       switch (c) {
         case 0 : break ;
         case 'f':
-          length = strlen( optarg ) + 1 ;
-          conf->filenames[ file_count ] = malloc( length ) ;
-          strncpy( conf->filenames[ file_count ], optarg, length ) ;
-          file_count = file_count + 1 ;
+          length = strlen(optarg) + 1;
+          conf->filenames[file_count] = malloc(length);
+          strncpy(conf->filenames[file_count], optarg, length);
+          file_count++;
           break;
         case 'c':
-          strncpy( conf->command, optarg, MAX_LENGTH_COMMAND ) ;
+          strncpy(conf->command, optarg, MAX_LENGTH_COMMAND);
           break;
         case 't':
-
           break;
         case '?':
-          /* getopt_long already printed an error message. */
           break;
         case 'v':
           puts("Version 1.0.0");
           exit(0);
-          break;
         default:
-          printf ("option %s unhandled", long_options[option_index].name);
-          abort ();
-        }
-    }
-    /* Print any remaining command line arguments (not options). */
-    if (optind < argc) {
-        while (optind < argc) {
-          length = strlen( argv[optind] ) + 1 ;
-          conf->arguments[ argument_count ] = malloc( length ) ;
-          strncpy( conf->arguments[ argument_count ], argv[optind], length ) ;
-          argument_count = argument_count + 1 ;
-          optind = optind + 1 ;
-        }
+          printf("option %s unhandled", long_options[option_index].name);
+          abort();
       }
+  }
+
+  // Récupère les arguments restants (positionnels)
+  while (optind < argc && argument_count < MAX_ARGUMENT_COUNT) {
+    length = strlen(argv[optind]) + 1;
+    conf->arguments[argument_count] = malloc(length);
+    strncpy(conf->arguments[argument_count], argv[optind], length);
+    argument_count++;
+    optind++;
+  }
+
+  // Gestion spécifique pour print_pixel : x et y
+  if (strcmp(conf->command, "print_pixel") == 0) {
+    if (argument_count < 2) {
+        fprintf(stderr, "Erreur : commande print_pixel attend deux arguments (x y)\n");
+        exit(1);
+    }
+    conf->x = atoi(conf->arguments[0]);
+    conf->y = atoi(conf->arguments[1]);
+  }
 }
 
 void check_file() {
-    if ( file_count < 1 ) {
-        printf("Missing file\n" );
+    if (file_count < 1) {
+        printf("Missing file\n");
         abort();
     }
 }
@@ -85,14 +90,14 @@ void check_file() {
 void check_debug_mode(Config conf) {
     if (conf.debug_mode) {
         printf("debug flag is set");
-        int file_index ;
-        for ( file_index = 0 ; file_index < file_count ; file_index++ ) {
-            printf( "file %d/%d: %s\n", file_index + 1 , file_count, conf.filenames[ file_index ] );
+        int file_index;
+        for (file_index = 0; file_index < file_count; file_index++) {
+            printf("file %d/%d: %s\n", file_index + 1, file_count, conf.filenames[file_index]);
         }
-        int argument_index ;
-        for ( argument_index = 0 ; argument_index < argument_count ; argument_index++ ) {
-            printf( "arguments %d/%d: %s\n", argument_index + 1 , argument_count, conf.arguments[ argument_index ] );
+        int argument_index;
+        for (argument_index = 0; argument_index < argument_count; argument_index++) {
+            printf("arguments %d/%d: %s\n", argument_index + 1, argument_count, conf.arguments[argument_index]);
         }
-        printf( "option: %s\n", conf.command );
-  }
+        printf("option: %s\n", conf.command);
+    }
 }

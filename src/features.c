@@ -3,6 +3,8 @@
 
 #include "features.h"
 #include "utils.h"
+#include <stdlib.h>
+
 
 /**
  * @brief Here, you have to code features of the project.
@@ -15,42 +17,40 @@ void helloWorld() {
     printf("Hello World !");
 }
 void dimension (char *source_path) {
-    int width ;
-    int height ;
-    int channel_count ;
-    unsigned char *data ;
-    
-    int resultat = read_image_data (source_path, &data, &width, &height, &channel_count);
+    int width;
+    int height;
+    int channel_count;
+    unsigned char *data;
+    int resultat = read_image_data(source_path, &data, &width,&height,&channel_count);
+   
     if(resultat) {
-    printf("dimension: %d, %d ", width, height);
+        printf("dimension: %d, %d ", width, height);
+    }else {
+        printf("erreur: ");
     }
-    else {
-     printf("erreur: ");
-    }
+ 
 }
-
 void first_pixel (char *source_path) {
     int width ;
     int height ;
     int channel_count ;
     unsigned char *data ;
-    
+   
     int resultat = read_image_data (source_path, &data, &width, &height, &channel_count);
     if(resultat) {
-    printf("dimension: %d, %d, %d ",data[0], data[1], data[2]);
+    printf("pixel: %d, %d, %d ",data[0], data[1], data[2]);
     }
     else {
-     printf("erreur: ");
+    printf("erreur");
     }
 }
-
 void tenth_pixel (char *source_path) {
     int width ;
     int height ;
     int channel_count ;
     unsigned char *data ;
     int pixel = 10 ;
-    
+   
     int resultat = read_image_data (source_path, &data, &width, &height, &channel_count);
     if(resultat) {
     printf("La couleur du dernier pixel est : %d, %d, %d ",data[3*pixel-3], data[3*pixel-2], data[3*pixel-1]);
@@ -87,43 +87,3 @@ void second_line(char *source_path) {
 
     free(data);
 }
-
-void max_component (char *source_path) {
-    int width, height, channel_count;
-    unsigned char *data;
-
-    read_image_data(source_path, &data, &width, &height, &channel_count);
- 
-    int max_value = -1; 
-    int max_x_component = 0, max_y_component = 0 ;
-
-    for (int y = 0; y < height ; y++ ) { 
-        for (int x = 0; x < width; x++) {
-            pixelRGB* pixel = get_pixel(data, width, height, channel_count, x, y);
-            int value ;
-
-            if (component == 'R'){
-                value = pixel->R;
-            } else if (component == 'G') { 
-                value = pixel->G;
-            } else {
-                value = pixel->B;
-            }
-
-            if (value > max_value) { 
-                max_value = value;
-                max_x_component=x; 
-                max_y_component=y;  
-            }
-        }
-
-    }
-}
-
-
-
-
-
-
-
-
