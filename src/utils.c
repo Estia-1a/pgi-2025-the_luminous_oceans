@@ -4,9 +4,7 @@
 
 #include "utils.h"
 
-/**
- * @brief Récupère un pointeur vers un pixel (x, y) dans l'image.
- */
+
 pixelRGB * get_pixel(unsigned char* data, const unsigned int width, const unsigned int height, const unsigned int n, const unsigned int x, const unsigned int y) {
     if (!data || x >= width || y >= height) {
         return NULL;
@@ -15,9 +13,7 @@ pixelRGB * get_pixel(unsigned char* data, const unsigned int width, const unsign
     return (pixelRGB *) &data[index];
 }
 
-/**
- * @brief Modifie le pixel (x, y) avec les valeurs de la structure pixelRGB.
- */
+
 void setPixel(unsigned char* data, const unsigned int width, const unsigned int height, const unsigned int n, const unsigned int x, const unsigned int y, pixelRGB* pixel) {
     if (!data || !pixel || x >= width || y >= height) {
         return;
@@ -28,9 +24,6 @@ void setPixel(unsigned char* data, const unsigned int width, const unsigned int 
     data[index + 2] = pixel->B;
 }
 
-/**
- * @brief Affiche les valeurs RGB du pixel à la position (x, y) de l'image.
- */
 void print_pixel(char *filename, int x, int y) {
     unsigned char *data = NULL;
     int width, height, channels;
