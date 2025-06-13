@@ -60,18 +60,30 @@ void tenth_pixel (char *source_path) {
     }
 }
 
-void second_line (char *source_path) {
-    int width = 2 ;
-    int height ;
-    int channel_count ;
-    unsigned char *data ;
-    int pixel = 1 ;
-    
-    int resultat = read_image_data (source_path, &data, &width, &height, &channel_count);
-    if(resultat) {
-    printf("La couleur du dernier pixel est : %d, %d, %d ",data[3*width], data[3*width+1], data[3*width+2]);
+void second_line(char *source_path) {
+    unsigned char *data = NULL;
+    int width, height, channels;
+
+    if (!read_image_data(source_path, &data, &width, &height, &channels)) {
+        fprintf(stderr, "Erreur : impossible de lire l'image %s\n", source_path);
+        return;
     }
-    else {
-     printf("erreur: ");
+
+    if (height < 2) {
+        fprintf(stderr, "Erreur : l'image doit avoir au moins 2 lignes.\n");
+        free(data);
+        return;
     }
+
+    pixelRGB *pixel = get_pixel(data, width, height, channels, 0, 1); // x=0, y=1
+
+    if (!pixel) {
+        fprintf(stderr, "Erreur : pixel non accessible à (0,1)\n");
+        free(data);
+        return;
+    }
+
+    printf("second_line: %u, %u, %u\n", pixel->R, pixel->G, pixel->B);
+
+    free(data);
 }
