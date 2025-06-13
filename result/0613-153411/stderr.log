@@ -1,0 +1,69 @@
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/features.c: In function ‘second_line’:
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/features.c:78:23: warning: implicit declaration of function ‘get_pixel’; did you mean ‘tenth_pixel’? [-Wimplicit-function-declaration]
+   78 |     pixelRGB *pixel = get_pixel(data, width, height, channels, 0, 1); // x=0, y=1
+      |                       ^~~~~~~~~
+      |                       tenth_pixel
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/features.c:78:23: warning: initialization of ‘pixelRGB *’ {aka ‘struct _pixelRGB *’} from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/utils.c: In function ‘setPixel’:
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/features.c:86:56: error: ‘pixelRGB’ {aka ‘struct _pixelRGB’} has no member named ‘G’
+   86 |     printf("second_line: %u, %u, %u\n", pixel->R, pixel->G, pixel->B);
+      |                                                        ^~
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/utils.c:23:28: error: ‘pixelRGB’ {aka ‘struct _pixelRGB’} has no member named ‘G’
+   23 |     data[index + 1] = pixel->G;
+      |                            ^~
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/features.c:86:66: error: ‘pixelRGB’ {aka ‘struct _pixelRGB’} has no member named ‘B’
+   86 |     printf("second_line: %u, %u, %u\n", pixel->R, pixel->G, pixel->B);
+      |                                                                  ^~
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/utils.c:24:28: error: ‘pixelRGB’ {aka ‘struct _pixelRGB’} has no member named ‘B’
+   24 |     data[index + 2] = pixel->B;
+      |                            ^~
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/features.c: In function ‘max_component’:
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/features.c:102:31: warning: initialization of ‘pixelRGB *’ {aka ‘struct _pixelRGB *’} from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
+  102 |             pixelRGB* pixel = get_pixel(data, width, height, channel_count, x, y);
+      |                               ^~~~~~~~~
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/utils.c: In function ‘print_pixel’:
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/utils.c:43:71: error: ‘pixelRGB’ {aka ‘struct _pixelRGB’} has no member named ‘G’
+   43 |     printf("print_pixel (%d, %d): %u, %u, %u\n", x, y, pixel->R, pixel->G, pixel->B);
+      |                                                                       ^~
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/utils.c:43:81: error: ‘pixelRGB’ {aka ‘struct _pixelRGB’} has no member named ‘B’
+   43 |     printf("print_pixel (%d, %d): %u, %u, %u\n", x, y, pixel->R, pixel->G, pixel->B);
+      |                                                                                 ^~
+gmake[2]: *** [CMakeFiles/freud.dir/build.make:121: CMakeFiles/freud.dir/src/utils.c.o] Error 1
+gmake[2]: *** Waiting for unfinished jobs....
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/features.c:105:17: error: ‘component’ undeclared (first use in this function); did you mean ‘max_component’?
+  105 |             if (component == 'R'){
+      |                 ^~~~~~~~~
+      |                 max_component
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/features.c:105:17: note: each undeclared identifier is reported only once for each function it appears in
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/features.c:108:30: error: ‘pixelRGB’ {aka ‘struct _pixelRGB’} has no member named ‘G’
+  108 |                 value = pixel->G;
+      |                              ^~
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/features.c:110:30: error: ‘pixelRGB’ {aka ‘struct _pixelRGB’} has no member named ‘B’
+  110 |                 value = pixel->B;
+      |                              ^~
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/main.c: In function ‘main’:
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/main.c:54:5: warning: implicit declaration of function ‘print_pixel’; did you mean ‘first_pixel’? [-Wimplicit-function-declaration]
+   54 |     print_pixel(configuration.filenames[0], configuration.x, configuration.y);
+      |     ^~~~~~~~~~~
+      |     first_pixel
+gmake[2]: *** [CMakeFiles/freud.dir/build.make:93: CMakeFiles/freud.dir/src/features.c.o] Error 1
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/main.c:59:5: error: too many arguments to function ‘max_component’
+   59 |     max_component(configuration.filenames[0], configuration.arguments[0][0]);
+      |     ^~~~~~~~~~~~~
+In file included from /home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/main.c:8:
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/features.h:10:6: note: declared here
+   10 | void max_component (char *source_path);
+      |      ^~~~~~~~~~~~~
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/main.c:61:6: error: ‘TO’ undeclared (first use in this function)
+   61 |    * TO COMPLETE
+      |      ^~
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/main.c:61:6: note: each undeclared identifier is reported only once for each function it appears in
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/main.c:61:8: error: expected ‘;’ before ‘COMPLETE’
+   61 |    * TO COMPLETE
+      |        ^~~~~~~~~
+      |        ;
+gmake[2]: *** [CMakeFiles/freud.dir/build.make:107: CMakeFiles/freud.dir/src/main.c.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:87: CMakeFiles/freud.dir/all] Error 2
+gmake: *** [Makefile:136: all] Error 2
+
+The process '/usr/local/bin/cmake' failed with exit code 2
