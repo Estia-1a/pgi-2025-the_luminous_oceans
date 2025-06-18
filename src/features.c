@@ -27,7 +27,7 @@ void first_pixel(char *source_path) {
 
     if (read_image_data(source_path, &data, &width, &height, &channel_count)) {
         if (channel_count >= 3) {
-            printf("pixel: %u, %u, %u\n",
+            printf("first_pixel: %u, %u, %u\n",
                    data[0], data[1], data[2]);
         } else {
             fprintf(stderr, "Erreur : image avec moins de 3 canaux.\n");
@@ -46,7 +46,7 @@ void tenth_pixel(char *source_path) {
     if (read_image_data(source_path, &data, &width, &height, &channel_count)) {
         if (channel_count >= 3 && pixel_index < width * height) {
             int offset = pixel_index * channel_count;
-            printf("10e pixel: %u, %u, %u\n",
+            printf("tenth_pixel: %u, %u, %u\n",
                    data[offset], data[offset+1], data[offset+2]);
         } else {
             fprintf(stderr, "Erreur : moins de 3 canaux ou pixel hors image.\n");
@@ -128,7 +128,7 @@ void print_pixel(char *source_path, int x, int y) {
     }
     pixelRGB *pixel = get_pixel(data, width, height, channel_count, x, y);
     if (pixel) {
-        printf("pixel(%d,%d): %u, %u, %u\n", x, y, pixel->r, pixel->g, pixel->b);
+        printf("print_pixel(%d,%d): %u, %u, %u\n", x, y, pixel->r, pixel->g, pixel->b);
         free(pixel);
     } else {
         fprintf(stderr, "Erreur : coordonnées hors image.\n");
