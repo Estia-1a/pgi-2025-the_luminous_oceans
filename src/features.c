@@ -240,3 +240,29 @@ void color_gray_luminance(char *source_path) {
 
     free(data);
 }
+void rotate_cw(char *source_path) {
+    int width, height, channels;
+    unsigned char *data = NULL;
+ 
+    if (!read_image_data(source_path, &data, &width, &height, &channels)) {
+        fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
+        return;
+    }
+ 
+    int new_width = height;
+    int new_height = width;
+    unsigned char *rotated_data = malloc(width * height * channels);
+ 
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            for (int c = 0; c < channels; c++) {
+                int src_index = (y * width + x) * channels + c;
+                int dest_index = (x * height + (height - 1 - y)) * channels + c;
+                rotated_data[dest_index] = data[src_index];
+            }
+        }
+    }
+ 
+    free(data);
+    free(rotated_data);
+}
