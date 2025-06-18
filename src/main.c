@@ -58,11 +58,6 @@ int main(int argc, char **argv) {
         printf("print_pixel nécessite deux arguments (x y)\n");
     }
 }
-
-
-  if (strncmp(configuration.command, "max_component", 13) == 0) {
-    max_component(configuration.filenames[0], configuration.arguments[0][0]);
-  }  
   
   if (strncmp(configuration.command, "color_red", 9) == 0) {
     color_red(configuration.filenames[0]);
@@ -117,6 +112,15 @@ int main(int argc, char **argv) {
   if (strncmp(configuration.command, "max_pixel", 9) == 0) {
     max_pixel(configuration.filenames[0]);
   }
-  
+
+  if (strncmp(configuration.command, "max_component", 13) == 0) {
+    if (configuration.arguments[0]) {
+      char component = configuration.arguments[0][0];
+      max_component(configuration.filenames[0], component);
+    } else {
+      printf("Usage : -c max_component R/G/B\n");
+    }
+  }
+
   return 0;
 }

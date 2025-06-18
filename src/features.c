@@ -82,46 +82,6 @@ void second_line(char *source_path) {
     free(data);
 }
 
-void max_component(char *source_path, char component) {
-    int width, height, channel_count;
-    unsigned char *data;
-
-    if (!read_image_data(source_path, &data, &width, &height, &channel_count)) {
-        fprintf(stderr, "Erreur : impossible de lire %s\n", source_path);
-        return;
-    }
-    if (channel_count < 3) {
-        fprintf(stderr, "Erreur : moins de 3 canaux.\n");
-        free(data);
-        return;
-    }
-    if (component != 'R' && component != 'G' && component != 'B') {
-        fprintf(stderr, "Erreur : composant invalide (%c)\n", component);
-        free(data);
-        return;
-    }
-
-    int max_val = -1, max_x = 0, max_y = 0;
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-            pixelRGB *p = get_pixel(data, width, height, channel_count, x, y);
-            if (p) {
-                int v = (component == 'R' ? p->r :
-                         component == 'G' ? p->g : p->b);
-                if (v > max_val) {
-                    max_val = v;
-                    max_x = x;
-                    max_y = y;
-                }
-                free(p);
-            }
-        }
-    }
-    printf("max_component (%c): %d at (%d, %d)\n",
-           component, max_val, max_x, max_y);
-    free(data);
-}
-
 void print_pixel(char *source_path, int x, int y) {
     int width, height, channel_count;
     unsigned char *data;
@@ -506,5 +466,40 @@ void max_pixel(char *source_path) {
         free(max_pixel);
     }
  
+    free(data);
+}
+void max_component(char *source_path, char component) {
+    int width, height, channels;
+    unsigned char *data = NULL;
+ 
+    if (!read_image_data(source_path, &data, &width, &height, &channels)) {
+        fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
+        return;
+    }
+ 
+    if (component != 'R' && component != 'G' && component != 'B') {
+        fprintf(stderr, "Erreur : composant invalide (choisir R, G ou B).\n");
+        free(data);
+        return;
+    }
+ 
+    int max_val = -1;
+    int max_x = 0, max_y = 0;
+ 
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            pixelRGB *p = get_pixel(data, width, height, channels, x, y);
+            int val = (component == 'R') ? p->r :
+                      (component == 'G') ? p->g : p->b;
+            if (val > max_val) {
+                max_val = val;
+                max_x = x;
+                max_y = y;
+            }
+            free(p);
+        }
+    }
+ 
+    printf("max_component %c (%d, %d): %d\n", component, max_x, max_y, max_val);
     free(data);
 }
