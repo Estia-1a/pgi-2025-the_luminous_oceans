@@ -78,6 +78,7 @@ void second_line(char *source_path) {
         /* accès aux champs r,g,b (minuscules dans estia-image.h) */
         printf("second_line: %u, %u, %u\n",
                pixel->r, pixel->g, pixel->b);
+        free(pixel); // CORRECTION: libérer la mémoire du pixel
     }
     free(data);
 }
@@ -105,12 +106,15 @@ void max_component(char *source_path, char component) {
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
             pixelRGB *p = get_pixel(data, width, height, channel_count, x, y);
-            int v = (component=='R' ? p->r :
-                     component=='G' ? p->g : p->b);
-            if (v > max_val) {
-                max_val = v;
-                max_x = x;
-                max_y = y;
+            if (p) { // CORRECTION: vérifier que le pixel n'est pas NULL
+                int v = (component=='R' ? p->r :
+                         component=='G' ? p->g : p->b);
+                if (v > max_val) {
+                    max_val = v;
+                    max_x = x;
+                    max_y = y;
+                }
+                free(p); // CORRECTION: libérer la mémoire du pixel
             }
         }
     }
@@ -118,6 +122,7 @@ void max_component(char *source_path, char component) {
            component, max_val, max_x, max_y);
     free(data);
 }
+
 void print_pixel(char *source_path, int x, int y) {
     int width, height, channel_count;
     unsigned char *data;
@@ -131,10 +136,11 @@ void print_pixel(char *source_path, int x, int y) {
         printf("print_pixel(%d,%d): %u, %u, %u\n", x, y, pixel->r, pixel->g, pixel->b);
         free(pixel);
     } else {
-        fprintf(stderr, "Erreur : coordonnées hors image.\n");
+        fprintf(stderr, "Erreur : coordonnées hors image.\n");
     }
     free(data);
 }
+
 void color_red(char *source_path) {
     int width, height, channels;
     unsigned char *data = NULL;
@@ -146,8 +152,13 @@ void color_red(char *source_path) {
 
     int size = width * height * channels;
     for (int i = 0; i < size; i += channels) {
-        data[i + 1] = 0;
-        data[i + 2] = 0;
+        data[i + 1] = 0; // G à 0
+        data[i + 2] = 0; // B à 0
+    }
+
+    // CORRECTION: sauvegarder l'image modifiée
+    if (write_image_data("image_out.bmp", data, width, height) != 0) {
+        fprintf(stderr, "Erreur : écriture de l'image échouée.\n");
     }
 
     free(data);
@@ -164,12 +175,18 @@ void color_blue(char *source_path) {
 
     int size = width * height * channels;
     for (int i = 0; i < size; i += channels) {
-        data[i] = 0;
-        data[i + 1] = 0;
+        data[i] = 0;     // R à 0
+        data[i + 1] = 0; // G à 0
+    }
+
+    // CORRECTION: sauvegarder l'image modifiée
+    if (write_image_data("image_out.bmp", data, width, height) != 0) {
+        fprintf(stderr, "Erreur : écriture de l'image échouée.\n");
     }
 
     free(data);
 }
+
 void color_gray(char *source_path) {
     int width, height, channels;
     unsigned char *data = NULL;
@@ -191,9 +208,14 @@ void color_gray(char *source_path) {
         data[i + 2] = gray;
     }
 
-    free(data);
+    // CORRECTION: sauvegarder l'image modifiée
+    if (write_image_data("image_out.bmp", data, width, height) != 0) {
+        fprintf(stderr, "Erreur : écriture de l'image échouée.\n");
+    }
 
+    free(data);
 }
+
 void color_green(char *source_path) {
     int width, height, channels;
     unsigned char *data = NULL;
@@ -208,6 +230,11 @@ void color_green(char *source_path) {
         data[i] = 0;     // R à 0
         data[i + 2] = 0; // B à 0
         // On garde G (data[i + 1])
+    }
+
+    // CORRECTION: sauvegarder l'image modifiée
+    if (write_image_data("image_out.bmp", data, width, height) != 0) {
+        fprintf(stderr, "Erreur : écriture de l'image échouée.\n");
     }
 
     free(data);
@@ -240,6 +267,7 @@ void color_gray_luminance(char *source_path) {
 
     free(data);
 }
+
 void rotate_cw(char *source_path) {
     int width, height, channels;
     unsigned char *data = NULL;
@@ -252,6 +280,13 @@ void rotate_cw(char *source_path) {
     int new_width = height;
     int new_height = width;
     unsigned char *rotated_data = malloc(width * height * channels);
+    
+    // CORRECTION: vérifier l'allocation mémoire
+    if (!rotated_data) {
+        fprintf(stderr, "Erreur : mémoire insuffisante pour la rotation.\n");
+        free(data);
+        return;
+    }
  
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
@@ -262,10 +297,16 @@ void rotate_cw(char *source_path) {
             }
         }
     }
+    
+    // CORRECTION: sauvegarder l'image tournée
+    if (write_image_data("image_out.bmp", rotated_data, new_width, new_height) != 0) {
+        fprintf(stderr, "Erreur : écriture de l'image échouée.\n");
+    }
  
     free(data);
     free(rotated_data);
 }
+
 void color_invert(char *source_path) {
     int width, height, channels;
     unsigned char *data = NULL;
@@ -279,9 +320,15 @@ void color_invert(char *source_path) {
     for (int i = 0; i < size; i++) {
         data[i] = 255 - data[i]; 
     }
+    
+    // CORRECTION: sauvegarder l'image inversée
+    if (write_image_data("image_out.bmp", data, width, height) != 0) {
+        fprintf(stderr, "Erreur : écriture de l'image échouée.\n");
+    }
  
     free(data);
 }
+
 void rotate_acw(char *source_path) {
     int width, height, channels;
     unsigned char *data = NULL;
@@ -318,10 +365,16 @@ void rotate_acw(char *source_path) {
     free(data);
     free(rotated_data);
 }
+
 void mirror_horizontal(char *source_path) {
     int width, height, channels;
     unsigned char *data = NULL;
 
+    // CORRECTION: ajouter la lecture de l'image manquante
+    if (!read_image_data(source_path, &data, &width, &height, &channels)) {
+        fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
+        return;
+    }
  
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width / 2; x++) {
@@ -334,6 +387,11 @@ void mirror_horizontal(char *source_path) {
                 data[right_index + c] = temp;
             }
         }
+    }
+    
+    // CORRECTION: sauvegarder l'image miroir
+    if (write_image_data("image_out.bmp", data, width, height) != 0) {
+        fprintf(stderr, "Erreur : écriture de l'image échouée.\n");
     }
  
     free(data);
