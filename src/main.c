@@ -63,7 +63,10 @@ int main(int argc, char **argv) {
   if (strncmp(configuration.command, "max_component", 13) == 0) {
     max_component(configuration.filenames[0], configuration.arguments[0][0]);
   }  
-   /* TO COMPLETE*/
   
+  if (strncmp(configuration.command, "color_red", 9) == 0) {
+    color_red(configuration.filenames[0]);
+  }
+
   return 0;
 }
