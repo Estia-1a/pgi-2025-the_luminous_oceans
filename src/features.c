@@ -539,3 +539,38 @@ void min_pixel(char *source_path) {
  
     free(data);
 }
+void min_component(char *source_path, char component) {
+    int width, height, channels;
+    unsigned char *data = NULL;
+ 
+    if (!read_image_data(source_path, &data, &width, &height, &channels)) {
+        fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
+        return;
+    }
+ 
+    if (component != 'R' && component != 'G' && component != 'B') {
+        fprintf(stderr, "Erreur : composant invalide (choisir R, G ou B).\n");
+        free(data);
+        return;
+    }
+ 
+    int min_val = 256;
+    int min_x = 0, min_y = 0;
+ 
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            pixelRGB *p = get_pixel(data, width, height, channels, x, y);
+            int val = (component == 'R') ? p->r :
+                      (component == 'G') ? p->g : p->b;
+            if (val < min_val) {
+                min_val = val;
+                min_x = x;
+                min_y = y;
+            }
+            free(p);
+        }
+    }
+ 
+    printf("min_component %c (%d, %d): %d\n", component, min_x, min_y, min_val);
+    free(data);
+}
