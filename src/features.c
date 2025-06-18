@@ -1,62 +1,59 @@
 #include <estia-image.h>
 #include <stdio.h>
-
-#include "features.h"
-#include "utils.h"
 #include <stdlib.h>
 
+#include "features.h"
+#include "utils.h"    // pour get_pixel()
 
-/**
- * @brief Here, you have to code features of the project.
- * Do not forget to commit regurlarly your changes.
- * Your commit messages must contain "#n" with: n = number of the corresponding feature issue.
- * When the feature is totally implemented, your commit message must contain "close #n".
- */
-
-void helloWorld() {
-    printf("Hello World !");
+void helloWorld(void) {
+    printf("Hello World !\n");
 }
-void dimension (char *source_path) {
-    int width;
-    int height;
-    int channel_count;
+
+void dimension(char *source_path) {
+    int width, height, channel_count;
     unsigned char *data;
-    int resultat = read_image_data(source_path, &data, &width,&height,&channel_count);
-   
-    if(resultat) {
-        printf("dimension: %d, %d ", width, height);
-    }else {
-        printf("erreur: ");
-    }
- 
-}
-void first_pixel (char *source_path) {
-    int width ;
-    int height ;
-    int channel_count ;
-    unsigned char *data ;
-   
-    int resultat = read_image_data (source_path, &data, &width, &height, &channel_count);
-    if(resultat) {
-    printf("pixel: %d, %d, %d ",data[0], data[1], data[2]);
-    }
-    else {
-    printf("erreur");
+
+    if (read_image_data(source_path, &data, &width, &height, &channel_count)) {
+        printf("dimension: %d, %d\n", width, height);
+        free(data);
+    } else {
+        fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
     }
 }
-void tenth_pixel (char *source_path) {
-    int width ;
-    int height ;
-    int channel_count ;
-    unsigned char *data ;
-    int pixel = 10 ;
-   
-    int resultat = read_image_data (source_path, &data, &width, &height, &channel_count);
-    if(resultat) {
-    printf("La couleur du dernier pixel est : %d, %d, %d ",data[3*pixel-3], data[3*pixel-2], data[3*pixel-1]);
+
+void first_pixel(char *source_path) {
+    int width, height, channel_count;
+    unsigned char *data;
+
+    if (read_image_data(source_path, &data, &width, &height, &channel_count)) {
+        if (channel_count >= 3) {
+            printf("pixel: %u, %u, %u\n",
+                   data[0], data[1], data[2]);
+        } else {
+            fprintf(stderr, "Erreur : image avec moins de 3 canaux.\n");
+        }
+        free(data);
+    } else {
+        fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
     }
-    else {
-     printf("erreur: ");
+}
+
+void tenth_pixel(char *source_path) {
+    int width, height, channel_count;
+    unsigned char *data;
+    int pixel_index = 9;  // 10ème pixel = index 9
+
+    if (read_image_data(source_path, &data, &width, &height, &channel_count)) {
+        if (channel_count >= 3 && pixel_index < width * height) {
+            int offset = pixel_index * channel_count;
+            printf("10e pixel: %u, %u, %u\n",
+                   data[offset], data[offset+1], data[offset+2]);
+        } else {
+            fprintf(stderr, "Erreur : moins de 3 canaux ou pixel hors image.\n");
+        }
+        free(data);
+    } else {
+        fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
     }
 }
 
@@ -65,68 +62,59 @@ void second_line(char *source_path) {
     int width, height, channels;
 
     if (!read_image_data(source_path, &data, &width, &height, &channels)) {
-        fprintf(stderr, "Erreur : impossible de lire l'image %s\n", source_path);
+        fprintf(stderr, "Erreur : impossible de lire %s\n", source_path);
         return;
     }
-
     if (height < 2) {
         fprintf(stderr, "Erreur : l'image doit avoir au moins 2 lignes.\n");
         free(data);
         return;
     }
 
-    pixelRGB *pixel = get_pixel(data, width, height, channels, 0, 1); // x=0, y=1
-
+    pixelRGB *pixel = get_pixel(data, width, height, channels, 0, 1);
     if (!pixel) {
-        fprintf(stderr, "Erreur : pixel non accessible à (0,1)\n");
+        fprintf(stderr, "Erreur : pixel (0,1) non accessible\n");
+    } else {
+        /* accès aux champs r,g,b (minuscules dans estia-image.h) */
+        printf("second_line: %u, %u, %u\n",
+               pixel->r, pixel->g, pixel->b);
+    }
+    free(data);
+}
+
+void max_component(char *source_path, char component) {
+    int width, height, channel_count;
+    unsigned char *data;
+
+    if (!read_image_data(source_path, &data, &width, &height, &channel_count)) {
+        fprintf(stderr, "Erreur : impossible de lire %s\n", source_path);
+        return;
+    }
+    if (channel_count < 3) {
+        fprintf(stderr, "Erreur : moins de 3 canaux.\n");
+        free(data);
+        return;
+    }
+    if (component!='R' && component!='G' && component!='B') {
+        fprintf(stderr, "Erreur : composant invalide (%c)\n", component);
         free(data);
         return;
     }
 
-    printf("second_line: %u, %u, %u\n", pixel->R, pixel->G, pixel->B);
-
-    free(data);
-}
-
-void max_component (char *source_path) {
-    int width, height, channel_count;
-    unsigned char *data;
-
-    read_image_data(source_path, &data, &width, &height, &channel_count);
- 
-    int max_value = -1; 
-    int max_x_component = 0, max_y_component = 0 ;
-
-    for (int y = 0; y < height ; y++ ) { 
+    int max_val = -1, max_x = 0, max_y = 0;
+    for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
-            pixelRGB* pixel = get_pixel(data, width, height, channel_count, x, y);
-            int value ;
-
-            if (component == 'R'){
-                value = pixel->R;
-            } else if (component == 'G') { 
-                value = pixel->G;
-            } else {
-                value = pixel->B;
-            }
-
-            if (value > max_value) { 
-                max_value = value;
-                max_x_component=x; 
-                max_y_component=y;  
+            pixelRGB *p = get_pixel(data, width, height, channel_count, x, y);
+            int v = (component=='R' ? p->r :
+                     component=='G' ? p->g : p->b);
+            if (v > max_val) {
+                max_val = v;
+                max_x = x;
+                max_y = y;
             }
         }
-
     }
+    printf("max_component (%c): %d at (%d, %d)\n",
+           component, max_val, max_x, max_y);
+    free(data);
 }
-
-
-
-
-
-
-
-
-
-
-
