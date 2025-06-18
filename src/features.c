@@ -644,49 +644,47 @@ void stat_report(char *source_path) {
     fclose(f);
     free(data);
 }
-void scale_crop(char *source_path, int center_x, int center_y, int crop_width, int crop_height) {
-    int width, height, channels;
-    unsigned char *data = NULL;
- 
-    if (!read_image_data(source_path, &data, &width, &height, &channels)) {
-        fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
-        return;
+void scale_crop(char *source_path, int center_x, int center_y, int width, int height) {
+    int original_width, original_height, channel_count;
+    unsigned char *data;
+
+    read_image_data(source_path, &data, &original_width, &original_height, &channel_count);
+
+    int x_start = center_x - width / 2;
+    int y_start = center_y - height / 2;
+
+    if (x_start < 0) {
+        x_start = 0;
+    } else if (x_start + width > original_width) {
+        x_start = original_width - width;
     }
- 
-    // Allocation de la nouvelle image (recadrée)
-    unsigned char *cropped = malloc(crop_width * crop_height * channels);
-    if (!cropped) {
-        fprintf(stderr, "Erreur : mémoire insuffisante.\n");
-        free(data);
-        return;
+
+    if (y_start < 0) {
+        y_start = 0;
+    } else if (y_start + height > original_height) {
+        y_start = original_height - height;
     }
- 
-    int start_x = center_x - crop_width / 2;
-    int start_y = center_y - crop_height / 2;
- 
-    for (int y = 0; y < crop_height; y++) {
-        for (int x = 0; x < crop_width; x++) {
-            int src_x = start_x + x;
-            int src_y = start_y + y;
- 
-            for (int c = 0; c < channels; c++) {
-                int dest_index = (y * crop_width + x) * channels + c;
-                if (src_x >= 0 && src_x < width && src_y >= 0 && src_y < height) {
-                    int src_index = (src_y * width + src_x) * channels + c;
-                    cropped[dest_index] = data[src_index];
-                } else {
-                    cropped[dest_index] = 0;  // noir si hors image
-                }
-            }
+
+    unsigned char *new_data = (unsigned char*)malloc(width * height * channel_count * sizeof(unsigned char));
+
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            int new_x = x_start + x;
+            int new_y = y_start + y;
+
+            pixelRGB *pixel = get_pixel(data, original_width, original_height, channel_count, new_x, new_y);
+            unsigned char R = pixel->r;
+            unsigned char G = pixel->g;
+            unsigned char B = pixel->b;
+
+            new_data[(y * width + x) * channel_count] = R;
+            new_data[(y * width + x) * channel_count + 1] = G;
+            new_data[(y * width + x) * channel_count + 2] = B;
         }
     }
- 
-    if (write_image_data("image_out.bmp", cropped, crop_width, crop_height) != 0) {
-        fprintf(stderr, "Erreur : écriture de l'image échouée.\n");
-    }
- 
-    free(data);
-    free(cropped);
+    write_image_data("image_out.bmp", new_data, width, height);
+    free(new_data);
+    free_image_data(data);
 }
 void scale_nearest(char *source_path, float scale) {
     int width, height, channels;

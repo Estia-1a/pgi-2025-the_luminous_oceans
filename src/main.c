@@ -140,17 +140,7 @@ int main(int argc, char **argv) {
   }
   
   if (strncmp(configuration.command, "scale_crop", 10) == 0) {
-    if (configuration.arguments[0] && configuration.arguments[1] &&
-        configuration.arguments[2] && configuration.arguments[3]) {
-      int center_x = atoi(configuration.arguments[0]);
-      int center_y = atoi(configuration.arguments[1]);
-      int crop_width = atoi(configuration.arguments[2]);
-      int crop_height = atoi(configuration.arguments[3]);
- 
-      scale_crop(configuration.filenames[0], center_x, center_y, crop_width, crop_height);
-    } else {
-      printf("Usage : -c scale_crop center_x center_y width height\n");
-    }
+    scale_crop(configuration.filenames[0], atoi(configuration.arguments[0]), atoi(configuration.arguments[1]), atoi(configuration.arguments[2]), atoi(configuration.arguments[3]));  
   }
   
   if (strncmp(configuration.command, "scale_nearest", 13) == 0) {
