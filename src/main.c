@@ -109,6 +109,10 @@ int main(int argc, char **argv) {
   if (strncmp(configuration.command, "mirror_total", 12) == 0) {
     mirror_total(configuration.filenames[0]);
   }
+
+  if (strncmp(configuration.command, "color_desaturate", 16) == 0) {
+    color_desaturate(configuration.filenames[0]);
+  }
   
   return 0;
 }
