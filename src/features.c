@@ -186,14 +186,10 @@ void color_gray(char *source_path) {
         unsigned char b = data[i + 2];
         unsigned char gray = (r + g + b) / 3;
 
-        data[i]     = gray;
+        data[i] = gray;
         data[i + 1] = gray;
         data[i + 2] = gray;
     }
-
-    if (write_image_data("image_out.bmp", data, width, height) != 0) {
-        fprintf(stderr, "Erreur : écriture de l'image échouée.\n");
-    }
-
+    
     free(data);
 }
