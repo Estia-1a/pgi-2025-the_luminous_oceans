@@ -118,3 +118,20 @@ void max_component(char *source_path, char component) {
            component, max_val, max_x, max_y);
     free(data);
 }
+void print_pixel(char *source_path, int x, int y) {
+    int width, height, channel_count;
+    unsigned char *data;
+
+    if (!read_image_data(source_path, &data, &width, &height, &channel_count)) {
+        fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
+        return;
+    }
+    pixelRGB *pixel = get_pixel(data, width, height, channel_count, x, y);
+    if (pixel) {
+        printf("pixel(%d,%d): %u, %u, %u\n", x, y, pixel->r, pixel->g, pixel->b);
+        free(pixel);
+    } else {
+        fprintf(stderr, "Erreur : coordonnées hors image.\n");
+    }
+    free(data);
+}
