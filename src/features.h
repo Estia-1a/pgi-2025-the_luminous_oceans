@@ -25,5 +25,5 @@ void min_pixel(char *source_path);
 void min_component(char *source_path, char component);
 void stat_report(char *source_path);
 void scale_crop(char *source_path, int center_x, int center_y, int crop_width, int crop_height);
-
+void scale_nearest(char *source_path, float scale);
 #endif
