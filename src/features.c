@@ -156,18 +156,23 @@ void color_red(char *source_path) {
 void color_blue(char *source_path) {
     int width, height, channels;
     unsigned char *data = NULL;
-
+ 
     if (!read_image_data(source_path, &data, &width, &height, &channels)) {
         fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
         return;
     }
-
+ 
     int size = width * height * channels;
     for (int i = 0; i < size; i += channels) {
-        data[i] = 0;
-        data[i + 1] = 0;
+        data[i] = 0;     // R à 0
+        data[i + 1] = 0; // G à 0
+        // On garde B (data[i + 2])
     }
-
+ 
+    if (write_image_data("image_out.bmp", data, width, height) != 0) {
+        fprintf(stderr, "Erreur : écriture de l'image échouée.\n");
+    }
+ 
     free(data);
 }
 void color_gray(char *source_path) {
@@ -197,19 +202,23 @@ void color_gray(char *source_path) {
 void color_green(char *source_path) {
     int width, height, channels;
     unsigned char *data = NULL;
-
+ 
     if (!read_image_data(source_path, &data, &width, &height, &channels)) {
         fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
         return;
     }
-
+ 
     int size = width * height * channels;
     for (int i = 0; i < size; i += channels) {
         data[i] = 0;     // R à 0
         data[i + 2] = 0; // B à 0
         // On garde G (data[i + 1])
     }
-
+ 
+    if (write_image_data("image_out.bmp", data, width, height) != 0) {
+        fprintf(stderr, "Erreur : écriture de l'image échouée.\n");
+    }
+ 
     free(data);
 }
 
@@ -240,6 +249,26 @@ void color_gray_luminance(char *source_path) {
 
     free(data);
 }
+void color_invert(char *source_path) {
+    int width, height, channels;
+    unsigned char *data = NULL;
+ 
+    if (!read_image_data(source_path, &data, &width, &height, &channels)) {
+        fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
+        return;
+    }
+ 
+    int size = width * height * channels;
+    for (int i = 0; i < size; i++) {
+        data[i] = 255 - data[i];  // Inversion de chaque canal
+    }
+ 
+    if (write_image_data("image_out.bmp", data, width, height) != 0) {
+        fprintf(stderr, "Erreur : écriture de l'image échouée.\n");
+    }
+ 
+    free(data);
+}
 void rotate_cw(char *source_path) {
     int width, height, channels;
     unsigned char *data = NULL;
@@ -253,6 +282,12 @@ void rotate_cw(char *source_path) {
     int new_height = width;
     unsigned char *rotated_data = malloc(width * height * channels);
  
+    if (!rotated_data) {
+        fprintf(stderr, "Erreur : mémoire insuffisante pour la rotation.\n");
+        free(data);
+        return;
+    }
+ 
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
             for (int c = 0; c < channels; c++) {
@@ -263,24 +298,12 @@ void rotate_cw(char *source_path) {
         }
     }
  
+    if (write_image_data("image_out.bmp", rotated_data, new_width, new_height) != 0) {
+        fprintf(stderr, "Erreur : écriture de l'image échouée.\n");
+    }
+ 
     free(data);
     free(rotated_data);
-}
-void color_invert(char *source_path) {
-    int width, height, channels;
-    unsigned char *data = NULL;
- 
-    if (!read_image_data(source_path, &data, &width, &height, &channels)) {
-        fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
-        return;
-    }
- 
-    int size = width * height * channels;
-    for (int i = 0; i < size; i++) {
-        data[i] = 255 - data[i]; 
-    }
- 
-    free(data);
 }
 void rotate_acw(char *source_path) {
     int width, height, channels;
@@ -335,7 +358,10 @@ void mirror_vertical(char *source_path) {
             }
         }
     }
- 
+    
+    if (write_image_data("image_out.bmp", data, width, height) != 0) {
+        fprintf(stderr, "Erreur : écriture de l'image échouée.\n");
+    }
     free(data);
 }
 
