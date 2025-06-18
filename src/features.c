@@ -503,3 +503,39 @@ void max_component(char *source_path, char component) {
     printf("max_component %c (%d, %d): %d\n", component, max_x, max_y, max_val);
     free(data);
 }
+void min_pixel(char *source_path) {
+    int width, height, channels;
+    unsigned char *data = NULL;
+ 
+    if (!read_image_data(source_path, &data, &width, &height, &channels)) {
+        fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
+        return;
+    }
+ 
+    int min_sum = 256 * 3 + 1; // Somme maximale possible +1
+    int min_x = 0, min_y = 0;
+    pixelRGB *min_pixel_ptr = NULL;
+ 
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            pixelRGB *p = get_pixel(data, width, height, channels, x, y);
+            int sum = p->r + p->g + p->b;
+            if (sum < min_sum) {
+                min_sum = sum;
+                min_x = x;
+                min_y = y;
+                if (min_pixel_ptr) free(min_pixel_ptr);
+                min_pixel_ptr = p;
+            } else {
+                free(p);
+            }
+        }
+    }
+ 
+    if (min_pixel_ptr) {
+        printf("min_pixel (%d, %d): %u, %u, %u\n", min_x, min_y, min_pixel_ptr->r, min_pixel_ptr->g, min_pixel_ptr->b);
+        free(min_pixel_ptr);
+    }
+ 
+    free(data);
+}
