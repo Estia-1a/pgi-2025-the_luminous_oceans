@@ -156,3 +156,25 @@ void color_red(char *source_path) {
 
     free(data);
 }
+void color_green(char *source_path) {
+    int width, height, channels;
+    unsigned char *data = NULL;
+ 
+    if (!read_image_data(source_path, &data, &width, &height, &channels)) {
+        fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
+        return;
+    }
+ 
+    int size = width * height * channels;
+    for (int i = 0; i < size; i += channels) {
+        data[i] = 0;     // R à 0
+        data[i + 2] = 0; // B à 0
+        // On garde G (data[i + 1])
+    }
+ 
+    if (write_image_data("image_out.bmp", data, width, height) != 0) {
+        fprintf(stderr, "Erreur : écriture de l'image échouée.\n");
+    }
+ 
+    free(data);
+}
