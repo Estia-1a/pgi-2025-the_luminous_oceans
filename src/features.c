@@ -230,3 +230,39 @@ void color_invert(char *source_path) {
 
     free(data);
 }
+void rotate_acw(char *source_path) {
+    int width, height, channels;
+    unsigned char *data = NULL;
+
+    if (!read_image_data(source_path, &data, &width, &height, &channels)) {
+        fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
+        return;
+    }
+
+    int new_width = height;
+    int new_height = width;
+    unsigned char *rotated_data = malloc(width * height * channels);
+
+    if (!rotated_data) {
+        fprintf(stderr, "Erreur : mémoire insuffisante pour la rotation.\n");
+        free(data);
+        return;
+    }
+
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            for (int c = 0; c < channels; c++) {
+                int src_index = (y * width + x) * channels + c;
+                int dest_index = ((width - 1 - x) * height + y) * channels + c;
+                rotated_data[dest_index] = data[src_index];
+            }
+        }
+    }
+
+    if (write_image_data("image_out.bmp", rotated_data, new_width, new_height) != 0) {
+        fprintf(stderr, "Erreur : écriture de l'image échouée.\n");
+    }
+
+    free(data);
+    free(rotated_data);
+}
