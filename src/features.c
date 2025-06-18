@@ -574,3 +574,73 @@ void min_component(char *source_path, char component) {
     printf("min_component %c (%d, %d): %d\n", component, min_x, min_y, min_val);
     free(data);
 }
+void stat_report(char *source_path) {
+    FILE *f = fopen("stat_report.txt", "w");
+    if (!f) {
+        fprintf(stderr, "Erreur : impossible de créer stat_report.txt\n");
+        return;
+    }
+ 
+    int width, height, channels;
+    unsigned char *data = NULL;
+ 
+    if (!read_image_data(source_path, &data, &width, &height, &channels)) {
+        fprintf(stderr, "Erreur : lecture image échouée.\n");
+        fclose(f);
+        return;
+    }
+ 
+    // Initialisation
+    int max_sum = -1, min_sum = 256 * 3 + 1;
+    int max_sum_x = 0, max_sum_y = 0;
+    int min_sum_x = 0, min_sum_y = 0;
+ 
+    int maxR = -1, maxG = -1, maxB = -1;
+    int maxRx = 0, maxRy = 0, maxGx = 0, maxGy = 0, maxBx = 0, maxBy = 0;
+ 
+    int minR = 256, minG = 256, minB = 256;
+    int minRx = 0, minRy = 0, minGx = 0, minGy = 0, minBx = 0, minBy = 0;
+ 
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            pixelRGB *p = get_pixel(data, width, height, channels, x, y);
+            int sum = p->r + p->g + p->b;
+ 
+            if (sum > max_sum) {
+                max_sum = sum;
+                max_sum_x = x;
+                max_sum_y = y;
+            }
+            if (sum < min_sum) {
+                min_sum = sum;
+                min_sum_x = x;
+                min_sum_y = y;
+            }
+ 
+            if (p->r > maxR) { maxR = p->r; maxRx = x; maxRy = y; }
+            if (p->g > maxG) { maxG = p->g; maxGx = x; maxGy = y; }
+            if (p->b > maxB) { maxB = p->b; maxBx = x; maxBy = y; }
+ 
+            if (p->r < minR) { minR = p->r; minRx = x; minRy = y; }
+            if (p->g < minG) { minG = p->g; minGx = x; minGy = y; }
+            if (p->b < minB) { minB = p->b; minBx = x; minBy = y; }
+ 
+            free(p);
+        }
+    }
+ 
+    // Écriture dans le fichier
+    fprintf(f, "max_pixel (%d, %d): %d\n\n", max_sum_x, max_sum_y, max_sum);
+    fprintf(f, "min_pixel (%d, %d): %d\n\n", min_sum_x, min_sum_y, min_sum);
+ 
+    fprintf(f, "max_component R (%d, %d): %d\n\n", maxRx, maxRy, maxR);
+    fprintf(f, "max_component G (%d, %d): %d\n\n", maxGx, maxGy, maxG);
+    fprintf(f, "max_component B (%d, %d): %d\n\n", maxBx, maxBy, maxB);
+ 
+    fprintf(f, "min_component R (%d, %d): %d\n\n", minRx, minRy, minR);
+    fprintf(f, "min_component G (%d, %d): %d\n\n", minGx, minGy, minG);
+    fprintf(f, "min_component B (%d, %d): %d\n", minBx, minBy, minB);
+ 
+    fclose(f);
+    free(data);
+}
