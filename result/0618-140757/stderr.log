@@ -1,0 +1,5 @@
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/main.c: In function ‘main’:
+/home/runner/work/pgi-2025-the_luminous_oceans/pgi-2025-the_luminous_oceans/src/main.c:56:9: warning: implicit declaration of function ‘print_pixel’; did you mean ‘first_pixel’? [-Wimplicit-function-declaration]
+   56 |         print_pixel(configuration.filenames[0], x, y);
+      |         ^~~~~~~~~~~
+      |         first_pixel
