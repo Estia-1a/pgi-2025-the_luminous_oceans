@@ -146,8 +146,8 @@ void color_red(char *source_path) {
 
     int size = width * height * channels;
     for (int i = 0; i < size; i += channels) {
-        data[i + 1] = 0; // G
-        data[i + 2] = 0; // B
+        data[i + 1] = 0;
+        data[i + 2] = 0;
     }
 
     free(data);
@@ -164,8 +164,8 @@ void color_blue(char *source_path) {
 
     int size = width * height * channels;
     for (int i = 0; i < size; i += channels) {
-        data[i] = 0; 
-        data[i + 1] = 0; 
+        data[i] = 0;
+        data[i + 1] = 0;
     }
 
     free(data);
@@ -186,29 +186,57 @@ void color_gray(char *source_path) {
         unsigned char b = data[i + 2];
         unsigned char gray = (r + g + b) / 3;
 
-        data[i] = gray;
+        data[i]     = gray;
         data[i + 1] = gray;
         data[i + 2] = gray;
     }
-    
+
     free(data);
-   
+
 }
 void color_green(char *source_path) {
     int width, height, channels;
     unsigned char *data = NULL;
- 
+
     if (!read_image_data(source_path, &data, &width, &height, &channels)) {
         fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
         return;
     }
- 
+
     int size = width * height * channels;
     for (int i = 0; i < size; i += channels) {
         data[i] = 0;     // R à 0
         data[i + 2] = 0; // B à 0
         // On garde G (data[i + 1])
     }
- 
+
+    free(data);
+}
+
+void color_gray_luminance(char *source_path) {
+    int width, height, channels;
+    unsigned char *data = NULL;
+
+    if (!read_image_data(source_path, &data, &width, &height, &channels)) {
+        fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
+        return;
+    }
+
+    int size = width * height * channels;
+    for (int i = 0; i < size; i += channels) {
+        unsigned char r = data[i];
+        unsigned char g = data[i + 1];
+        unsigned char b = data[i + 2];
+        unsigned char gray = (unsigned char)(0.21 * r + 0.72 * g + 0.07 * b);
+
+        data[i]     = gray;
+        data[i + 1] = gray;
+        data[i + 2] = gray;
+    }
+
+    if (write_image_data("image_out.bmp", data, width, height) != 0) {
+        fprintf(stderr, "Erreur : écriture de l'image échouée.\n");
+    }
+
     free(data);
 }
