@@ -183,3 +183,50 @@ void color_gray(char *source_path) {
 
     free(data);
 }
+void color_gray_luminance(char *source_path) {
+    int width, height, channels;
+    unsigned char *data = NULL;
+
+    if (!read_image_data(source_path, &data, &width, &height, &channels)) {
+        fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
+        return;
+    }
+
+    int size = width * height * channels;
+    for (int i = 0; i < size; i += channels) {
+        unsigned char r = data[i];
+        unsigned char g = data[i + 1];
+        unsigned char b = data[i + 2];
+        unsigned char gray = (unsigned char)(0.21 * r + 0.72 * g + 0.07 * b);
+
+        data[i]     = gray;
+        data[i + 1] = gray;
+        data[i + 2] = gray;
+    }
+
+    if (write_image_data("image_out.bmp", data, width, height) != 0) {
+        fprintf(stderr, "Erreur : écriture de l'image échouée.\n");
+    }
+
+    free(data);
+}
+void color_invert(char *source_path) {
+    int width, height, channels;
+    unsigned char *data = NULL;
+
+    if (!read_image_data(source_path, &data, &width, &height, &channels)) {
+        fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
+        return;
+    }
+
+    int size = width * height * channels;
+    for (int i = 0; i < size; i++) {
+        data[i] = 255 - data[i];  // Inversion de chaque canal
+    }
+
+    if (write_image_data("image_out.bmp", data, width, height) != 0) {
+        fprintf(stderr, "Erreur : écriture de l'image échouée.\n");
+    }
+
+    free(data);
+}

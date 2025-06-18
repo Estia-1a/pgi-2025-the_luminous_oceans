@@ -9,5 +9,7 @@ void second_line(char *source_path);
 void max_component(char *source_path, char component);
 void color_red(char *source_path);
 void color_gray(char *source_path);
+void color_gray_luminance(char *source_path);
+void color_invert(char *source_path);
 
 #endif
