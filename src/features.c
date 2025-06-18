@@ -728,3 +728,66 @@ void scale_nearest(char *source_path, float scale) {
     free(data);
     free(scaled_data);
 }
+float lerp(float a, float b, float t) {
+    return a + t * (b - a);
+}
+ 
+void scale_bilinear(char *source_path, float scale) {
+    int width, height, channels;
+    unsigned char *data = NULL;
+ 
+    if (!read_image_data(source_path, &data, &width, &height, &channels)) {
+        fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
+        return;
+    }
+ 
+    int new_width = (int)(width * scale);
+    int new_height = (int)(height * scale);
+    unsigned char *scaled_data = malloc(new_width * new_height * channels);
+ 
+    if (!scaled_data) {
+        fprintf(stderr, "Erreur : mémoire insuffisante.\n");
+        free(data);
+        return;
+    }
+ 
+    for (int y = 0; y < new_height; y++) {
+        for (int x = 0; x < new_width; x++) {
+            float src_x = x / scale;
+            float src_y = y / scale;
+ 
+            int x1 = (int)src_x;
+            int y1 = (int)src_y;
+            int x2 = x1 + 1;
+            int y2 = y1 + 1;
+ 
+            float dx = src_x - x1;
+            float dy = src_y - y1;
+ 
+            if (x1 >= width) x1 = width - 1;
+            if (x2 >= width) x2 = width - 1;
+            if (y1 >= height) y1 = height - 1;
+            if (y2 >= height) y2 = height - 1;
+ 
+            for (int c = 0; c < channels; c++) {
+                float Q11 = data[(y1 * width + x1) * channels + c];
+                float Q12 = data[(y1 * width + x2) * channels + c];
+                float Q21 = data[(y2 * width + x1) * channels + c];
+                float Q22 = data[(y2 * width + x2) * channels + c];
+ 
+                float R1 = lerp(Q11, Q12, dx);
+                float R2 = lerp(Q21, Q22, dx);
+                float P = lerp(R1, R2, dy);
+ 
+                scaled_data[(y * new_width + x) * channels + c] = (unsigned char)(P + 0.5f);
+            }
+        }
+    }
+ 
+    if (write_image_data("image_out.bmp", scaled_data, new_width, new_height) != 0) {
+        fprintf(stderr, "Erreur : écriture de l'image échouée.\n");
+    }
+ 
+    free(data);
+    free(scaled_data);
+}
