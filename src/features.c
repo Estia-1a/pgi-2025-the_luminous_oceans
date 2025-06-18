@@ -443,3 +443,33 @@ void mirror_total(char *source_path) {
  
     free(data);
 }
+void color_desaturate(char *source_path) {
+    int width, height, channels;
+    unsigned char *data = NULL;
+ 
+    if (!read_image_data(source_path, &data, &width, &height, &channels)) {
+        fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
+        return;
+    }
+ 
+    int size = width * height * channels;
+    for (int i = 0; i < size; i += channels) {
+        unsigned char r = data[i];
+        unsigned char g = data[i + 1];
+        unsigned char b = data[i + 2];
+ 
+        unsigned char min_val = r < g ? (r < b ? r : b) : (g < b ? g : b);
+        unsigned char max_val = r > g ? (r > b ? r : b) : (g > b ? g : b);
+        unsigned char desaturated = (min_val + max_val) / 2;
+ 
+        data[i]     = desaturated;
+        data[i + 1] = desaturated;
+        data[i + 2] = desaturated;
+    }
+ 
+    if (write_image_data("image_out.bmp", data, width, height) != 0) {
+        fprintf(stderr, "Erreur : écriture de l'image échouée.\n");
+    }
+ 
+    free(data);
+}
