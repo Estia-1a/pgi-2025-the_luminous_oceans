@@ -150,8 +150,22 @@ void color_red(char *source_path) {
         data[i + 2] = 0; // B
     }
 
-    if (write_image_data("image_out.bmp", data, width, height) != 0) {
-        fprintf(stderr, "Erreur : impossible d’écrire l’image.\n");
+    free(data);
+}
+
+void color_blue(char *source_path) {
+    int width, height, channels;
+    unsigned char *data = NULL;
+
+    if (!read_image_data(source_path, &data, &width, &height, &channels)) {
+        fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
+        return;
+    }
+
+    int size = width * height * channels;
+    for (int i = 0; i < size; i += channels) {
+        data[i] = 0; 
+        data[i + 1] = 0; 
     }
 
     free(data);
