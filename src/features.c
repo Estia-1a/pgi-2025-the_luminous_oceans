@@ -318,3 +318,23 @@ void rotate_acw(char *source_path) {
     free(data);
     free(rotated_data);
 }
+void mirror_horizontal(char *source_path) {
+    int width, height, channels;
+    unsigned char *data = NULL;
+
+ 
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width / 2; x++) {
+            int left_index  = (y * width + x) * channels;
+            int right_index = (y * width + (width - 1 - x)) * channels;
+ 
+            for (int c = 0; c < channels; c++) {
+                unsigned char temp = data[left_index + c];
+                data[left_index + c] = data[right_index + c];
+                data[right_index + c] = temp;
+            }
+        }
+    }
+ 
+    free(data);
+}

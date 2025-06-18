@@ -98,5 +98,9 @@ int main(int argc, char **argv) {
     rotate_acw(configuration.filenames[0]);
   }
 
+  if (strncmp(configuration.command, "mirror_horizontal", 17) == 0) {
+    mirror_horizontal(configuration.filenames[0]);
+  }
+
   return 0;
 }
