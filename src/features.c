@@ -318,7 +318,7 @@ void rotate_acw(char *source_path) {
     free(data);
     free(rotated_data);
 }
-void mirror_horizontal(char *source_path) {
+void mirror_vertical(char *source_path) {
     int width, height, channels;
     unsigned char *data = NULL;
 
@@ -334,6 +334,35 @@ void mirror_horizontal(char *source_path) {
                 data[right_index + c] = temp;
             }
         }
+    }
+ 
+    free(data);
+}
+
+void mirror_horizontal(char *source_path) {
+    int width, height, channels;
+    unsigned char *data = NULL;
+ 
+    if (!read_image_data(source_path, &data, &width, &height, &channels)) {
+        fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
+        return;
+    }
+ 
+    for (int y = 0; y < height / 2; y++) {
+        for (int x = 0; x < width; x++) {
+            int top_index = (y * width + x) * channels;
+            int bottom_index = ((height - 1 - y) * width + x) * channels;
+ 
+            for (int c = 0; c < channels; c++) {
+                unsigned char temp = data[top_index + c];
+                data[top_index + c] = data[bottom_index + c];
+                data[bottom_index + c] = temp;
+            }
+        }
+    }
+ 
+    if (write_image_data("image_out.bmp", data, width, height) != 0) {
+        fprintf(stderr, "Erreur : écriture de l'image échouée.\n");
     }
  
     free(data);
