@@ -473,3 +473,38 @@ void color_desaturate(char *source_path) {
  
     free(data);
 }
+void max_pixel(char *source_path) {
+    int width, height, channels;
+    unsigned char *data = NULL;
+ 
+    if (!read_image_data(source_path, &data, &width, &height, &channels)) {
+        fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
+        return;
+    }
+ 
+    int max_sum = -1;
+    int max_x = 0, max_y = 0;
+    pixelRGB *max_pixel = NULL;
+ 
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            pixelRGB *p = get_pixel(data, width, height, channels, x, y);
+            int sum = p->r + p->g + p->b;
+            if (sum > max_sum) {
+                max_sum = sum;
+                max_x = x;
+                max_y = y;
+                max_pixel = p;
+            } else {
+                free(p); // libère les autres pixels
+            }
+        }
+    }
+ 
+    if (max_pixel) {
+        printf("max_pixel (%d, %d): %u, %u, %u\n", max_x, max_y, max_pixel->r, max_pixel->g, max_pixel->b);
+        free(max_pixel);
+    }
+ 
+    free(data);
+}
