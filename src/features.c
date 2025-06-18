@@ -266,3 +266,19 @@ void rotate_cw(char *source_path) {
     free(data);
     free(rotated_data);
 }
+void color_invert(char *source_path) {
+    int width, height, channels;
+    unsigned char *data = NULL;
+ 
+    if (!read_image_data(source_path, &data, &width, &height, &channels)) {
+        fprintf(stderr, "Erreur : lecture de l'image échouée.\n");
+        return;
+    }
+ 
+    int size = width * height * channels;
+    for (int i = 0; i < size; i++) {
+        data[i] = 255 - data[i]; 
+    }
+ 
+    free(data);
+}
